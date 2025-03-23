@@ -1,0 +1,13 @@
+form {
+  display: inline-block;
+}
+.button {
+  -webkit-appearance: none;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.postImage {
+  max-width: 50vw;
+  max-height: 50vh;
+}
