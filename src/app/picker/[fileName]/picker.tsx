@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 export default function Picker({ fileName }: { fileName: string }) {
   const [index, setIndex] = useState(-1);
   const [posts, setPosts] = useState([]);
+  const [filter, setFilter] = useState<null | "picked" | "skipped" | "unset">(
+    null
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -32,7 +35,6 @@ export default function Picker({ fileName }: { fileName: string }) {
 
   useEffect(() => {
     const preloadCount = 10;
-
     for (let i = -preloadCount; i < preloadCount; i++) {
       const post = posts[index + i];
       if (post) {
@@ -51,27 +53,67 @@ export default function Picker({ fileName }: { fileName: string }) {
   const canGoNext = index < posts.length - 1;
   const canGoPrev = index > 0;
 
-  async function handlePick(formData: FormData) {
+  async function handlePick() {
     post.picked = !!!post.picked;
     writePosts(fileName, [...posts]);
     const updatedPosts = await getPosts(fileName);
     setPosts(updatedPosts);
     if (canGoNext) {
-      setIndex(index + 1);
+      goDirection(1);
+    }
+  }
+
+  function goDirection(direction: 1 | -1) {
+    for (
+      let i = index + direction;
+      i >= 0 && i < posts.length;
+      i += direction
+    ) {
+      if (
+        (filter === "picked" && posts[i].picked) ||
+        (filter === "skipped" && posts[i].picked === false) ||
+        (filter === "unset" && posts[i].picked === null) ||
+        filter === null
+      ) {
+        setIndex(i);
+        return;
+      }
     }
   }
 
   return (
     <div>
-      <h2>
-        <a href={post.url}>
-          {index + 1} of {posts.length}
+      <strong>
+        {index + 1} of {posts.length}{" "}
+        <a
+          onClick={() => {
+            router.push(`/picked/${fileName}`);
+          }}
+        >
+          ({posts.filter((post) => post.picked).length} picked,{" "}
+          {posts.filter((post) => post.picked === false).length} skipped,
+          {posts.filter((post) => post.picked === undefined).length} unset)
         </a>
-      </h2>
+      </strong>
       <div>
         <button
+          className="button"
           onClick={() => {
-            setIndex(index - 1);
+            if (filter === null) setFilter("picked");
+            if (filter === "picked") setFilter("skipped");
+            if (filter === "skipped") setFilter("unset");
+            if (filter === "unset") setFilter(null);
+          }}
+        >
+          {filter === "picked" && "only picked"}
+          {filter === "skipped" && "only skipped"}
+          {filter === "unset" && "only unset"}
+          {filter === null && "no filter"}
+        </button>
+
+        <button
+          onClick={() => {
+            goDirection(-1);
           }}
           className="button"
           disabled={!canGoPrev}
@@ -80,21 +122,12 @@ export default function Picker({ fileName }: { fileName: string }) {
         </button>
         <button
           onClick={() => {
-            setIndex(index + 1);
+            goDirection(+1);
           }}
           className="button"
           disabled={!canGoNext}
         >
           Next
-        </button>
-
-        <button
-          className="button"
-          onClick={() => {
-            router.push(`/picked/${fileName}`);
-          }}
-        >
-          {posts.filter((post) => post.picked).length} picked
         </button>
 
         <button onClick={handlePick} className="button">
