@@ -23,7 +23,7 @@ export default function Picker({ fileName }: { fileName: string }) {
         const lastPickedIndex = posts
           .map((post) => post.picked !== undefined)
           .lastIndexOf(true);
-        setIndex(lastPickedIndex);
+        setIndex(Math.max(0, lastPickedIndex));
       }
     })();
   }, []);
@@ -46,7 +46,7 @@ export default function Picker({ fileName }: { fileName: string }) {
       }
     }
   }, [posts, index]);
-
+  console.log(index);
   const post = posts[index] as any;
   if (!post) return <div>none</div>;
 
