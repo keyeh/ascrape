@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { clearLog, getLog, scrapeIt } from "./actions";
 import { useInterval } from "usehooks-ts";
 export default function ScraperPage({

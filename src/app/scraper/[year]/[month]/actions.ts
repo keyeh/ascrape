@@ -9,7 +9,7 @@ export async function getLog(fileName: string) {
   const filePath = path.join(process.cwd(), "data", fileName); // Adjust directory as needed
   try {
     const fileContent = await fs.promises.readFile(filePath, "utf-8");
-    return fileContent;
+    return fileContent.split("\n").reverse().join("\n");
   } catch (error) {
     return "Error reading file: " + error.message;
   }
