@@ -133,7 +133,7 @@ export default function Picker({ fileName }: { fileName: string }) {
         <button onClick={() => handlePick(false)} className="button">
           skip
         </button>
-        <button onClick={handlePick} className="button">
+        <button onClick={handlePick(true)} className="button">
           pick
         </button>
         <hr />
