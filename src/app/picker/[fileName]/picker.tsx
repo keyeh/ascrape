@@ -53,12 +53,12 @@ export default function Picker({ fileName }: { fileName: string }) {
   const canGoNext = index < posts.length - 1;
   const canGoPrev = index > 0;
 
-  async function handlePick() {
-    post.picked = !!!post.picked;
+  async function handlePick(pick: boolean) {
+    post.picked = pick;
     writePosts(fileName, [...posts]);
     const updatedPosts = await getPosts(fileName);
     setPosts(updatedPosts);
-    if (canGoNext) {
+    if (canGoNext && filter === null) {
       goDirection(1);
     }
   }
@@ -130,8 +130,11 @@ export default function Picker({ fileName }: { fileName: string }) {
           Next
         </button>
 
+        <button onClick={() => handlePick(false)} className="button">
+          skip
+        </button>
         <button onClick={handlePick} className="button">
-          {post.picked ? "unpick" : "pick"}
+          pick
         </button>
         <hr />
         {post.picked == undefined && "unset"}
