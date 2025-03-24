@@ -4,7 +4,7 @@ import path from "path";
 import "./page.css";
 
 const years = [2025, 2024];
-
+export const dynamic = "force-dynamic";
 export default async function Home() {
   const directoryPath = path.join(process.cwd(), "data"); // Change this to your target directory
   const files = await fs.promises.readdir(directoryPath);
