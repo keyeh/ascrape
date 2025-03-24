@@ -69,20 +69,6 @@ export default async function Home() {
           )}
         </tbody>
       </table>
-      <hr />
-      <ul>
-        {files.map((filename, index) => (
-          <li key={index}>
-            <Link
-              href={{
-                pathname: `/picker/${filename}`,
-              }}
-            >
-              {filename}
-            </Link>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
