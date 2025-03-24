@@ -1,13 +1,32 @@
-form {
-  display: inline-block;
+.picker {
+  height: 100dvh;
 }
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
 .button {
   -webkit-appearance: none;
   font-size: 20px;
   padding: 10px;
 }
-
+.post {
+  padding-bottom: 5px;
+}
 .postImage {
-  max-width: 49vw;
-  max-height: 50vh;
+  width: 100%;
+}
+.masonry {
+  gap: 2px !important;
+  & > div {
+    gap: 2px !important;
+  }
+}
+
+.sticky {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  background-color: darkslategray;
 }

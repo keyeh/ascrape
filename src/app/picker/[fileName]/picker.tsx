@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getPosts, writePosts } from "./actions";
-import "./page.css";
 import { useRouter } from "next/navigation";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import "./page.css";
 
 export default function Picker({ fileName }: { fileName: string }) {
   const [index, setIndex] = useState(-1);
@@ -32,7 +33,7 @@ export default function Picker({ fileName }: { fileName: string }) {
   }, [index]);
 
   useEffect(() => {
-    const preloadCount = 10;
+    const preloadCount = 5;
     for (let i = -preloadCount; i < preloadCount; i++) {
       const post = posts[index + i];
       if (post) {
@@ -79,84 +80,99 @@ export default function Picker({ fileName }: { fileName: string }) {
   }
 
   return (
-    <div>
-      <strong>
-        {index + 1} of {posts.length}{" "}
-        <a
-          onClick={() => {
-            router.push(`/picked/${fileName}`);
-          }}
-        >
-          ({posts.filter((post) => post.picked).length} picked,{" "}
-          {posts.filter((post) => post.picked === false).length} skipped,
-          {posts.filter((post) => post.picked === undefined).length} unset)
-        </a>
-      </strong>
-      <div>
-        <button
-          className="button"
-          onClick={() => {
-            if (filter === null) setFilter("picked");
-            if (filter === "picked") setFilter("skipped");
-            if (filter === "skipped") setFilter(null);
-          }}
-        >
-          {filter === "picked" && "only picked"}
-          {filter === "skipped" && "only skipped"}
-          {filter === null && "no filter"}
-        </button>
-
-        <button
-          onClick={() => {
-            goDirection(-1);
-          }}
-          className="button"
-          disabled={!canGoPrev}
-        >
-          Prev
-        </button>
-        <button
-          onClick={() => {
-            goDirection(+1);
-          }}
-          className="button"
-          disabled={!canGoNext}
-        >
-          Next
-        </button>
-
-        <button onClick={() => handlePick(false)} className="button">
-          skip
-        </button>
-        <button onClick={() => handlePick(true)} className="button">
-          pick
-        </button>
+    <div className="picker">
+      <Post post={post} />
+      <div className="sticky">
+        <strong>
+          {index + 1} of {posts.length}{" "}
+          <a
+            onClick={() => {
+              router.push(`/picked/${fileName}`);
+            }}
+          >
+            ({posts.filter((post) => post.picked).length} picked,{" "}
+            {posts.filter((post) => post.picked === false).length} skipped,
+            {posts.filter((post) => post.picked === undefined).length} unset)
+          </a>
+        </strong>
+        <div className="buttons">
+          <button
+            className="button"
+            onClick={() => {
+              if (filter === null) setFilter("picked");
+              if (filter === "picked") setFilter("skipped");
+              if (filter === "skipped") setFilter(null);
+            }}
+          >
+            {filter === "picked" && "only picked"}
+            {filter === "skipped" && "only skipped"}
+            {filter === null && "no filter"}
+          </button>
+          <div>
+            <button
+              onClick={() => {
+                goDirection(-1);
+              }}
+              className="button"
+              disabled={!canGoPrev}
+            >
+              Prev
+            </button>
+            <button
+              onClick={() => {
+                goDirection(+1);
+              }}
+              className="button"
+              disabled={!canGoNext}
+            >
+              Next
+            </button>
+          </div>
+          <div>
+            <button onClick={() => handlePick(false)} className="button">
+              skip
+            </button>
+            <button onClick={() => handlePick(true)} className="button">
+              pick
+            </button>
+          </div>
+        </div>
         <hr />
         {post.picked == undefined && "unset"}
         {post.picked === false && "skipped"}
         {post.picked && "picked"}
+        <hr />
       </div>
-      <hr />
-
-      <Post post={post} />
     </div>
   );
 }
 
 function Post({ post, ...props }) {
   return (
-    <div {...props}>
+    <div className="post" {...props}>
       <pre>{post.text}</pre>
-
-      {post.images?.map((image: any) => (
-        <img
-          key={image}
-          className="postImage"
-          // src="https://placehold.co/600x400/EEE/31343C"
-          src={image}
-          alt=""
-        />
-      ))}
+      <ResponsiveMasonry
+        columnsCountBreakPoints={{
+          400: 2,
+          800: 3,
+          1200: 4,
+          1600: 5,
+          2000: 6,
+          2400: 7,
+        }}
+      >
+        <Masonry className={"masonry"}>
+          {post.images?.map((image: any) => (
+            <img
+              key={image}
+              className="postImage"
+              // src="https://placehold.co/600x400/EEE/31343C"
+              src={image}
+              alt=""
+            />
+          ))}
+        </Masonry>
+      </ResponsiveMasonry>
     </div>
   );
 }

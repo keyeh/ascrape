@@ -11,14 +11,17 @@
   },
   "dependencies": {
     "next": "15.2.3",
+    "prop-types": "^15.8.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-responsive-masonry": "^2.7.1",
     "usehooks-ts": "^3.1.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-responsive-masonry": "^2.6.0",
     "cheerio": "^1.0.0",
     "html-to-text": "^9.0.5",
     "node-fetch-cache": "^5.0.2",
