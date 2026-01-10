@@ -4,7 +4,7 @@ import path from "path";
 import "./page.css";
 
 let years: number[] = [];
-for (let i = 2024; i <= new Date().getFullYear(); i++) {
+for (let i = new Date().getFullYear(); i >= 2024; i--) {
   years.push(i);
 }
 
