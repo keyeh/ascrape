@@ -8,7 +8,9 @@ import "./page.css";
 export default function Picker({ fileName }: { fileName: string }) {
   const [index, setIndex] = useState(-1);
   const [posts, setPosts] = useState([]);
-  const [filter, setFilter] = useState<null | "picked" | "skipped">(null);
+  const [filter, setFilter] = useState<null | "picked" | "skipped" | "unset">(
+    null
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function Picker({ fileName }: { fileName: string }) {
       }
     }
   }, [posts, index]);
-  console.log(index);
+
   const post = posts[index] as any;
   if (!post) return <div>none</div>;
 
@@ -71,6 +73,7 @@ export default function Picker({ fileName }: { fileName: string }) {
       if (
         (filter === "picked" && posts[i].picked) ||
         (filter === "skipped" && posts[i].picked === false) ||
+        (filter === "unset" && posts[i].picked === undefined) ||
         filter === null
       ) {
         setIndex(i);
@@ -101,11 +104,13 @@ export default function Picker({ fileName }: { fileName: string }) {
             onClick={() => {
               if (filter === null) setFilter("picked");
               if (filter === "picked") setFilter("skipped");
-              if (filter === "skipped") setFilter(null);
+              if (filter === "skipped") setFilter("unset");
+              if (filter === "unset") setFilter(null);
             }}
           >
             {filter === "picked" && "only picked"}
             {filter === "skipped" && "only skipped"}
+            {filter === "unset" && "only unset"}
             {filter === null && "no filter"}
           </button>
           <div>
@@ -151,28 +156,37 @@ function Post({ post, ...props }) {
   return (
     <div className="post" {...props}>
       <pre>{post.text}</pre>
-      <ResponsiveMasonry
-        columnsCountBreakPoints={{
-          400: 2,
-          800: 3,
-          1200: 4,
-          1600: 5,
-          2000: 6,
-          2400: 7,
-        }}
-      >
-        <Masonry className={"masonry"}>
-          {post.images?.map((image: any) => (
-            <img
-              key={image}
-              className="postImage"
-              // src="https://placehold.co/600x400/EEE/31343C"
-              src={image}
-              alt=""
-            />
-          ))}
-        </Masonry>
-      </ResponsiveMasonry>
+      {post.images?.length == 1 ? (
+        <img
+          className="postImage"
+          // src="https://placehold.co/600x400/EEE/31343C"
+          src={post.images[0]}
+          alt=""
+        />
+      ) : (
+        <ResponsiveMasonry
+          columnsCountBreakPoints={{
+            400: 2,
+            800: 3,
+            1200: 4,
+            1600: 5,
+            2000: 6,
+            2400: 7,
+          }}
+        >
+          <Masonry className={"masonry"}>
+            {post.images?.map((image: any) => (
+              <img
+                key={image}
+                className="postImage"
+                // src="https://placehold.co/600x400/EEE/31343C"
+                src={image}
+                alt=""
+              />
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
+      )}
     </div>
   );
 }
