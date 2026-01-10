@@ -26,7 +26,7 @@ export default async function Home() {
                   minimumIntegerDigits: 2,
                   useGrouping: false,
                 });
-                if (year === 2024 && month < 8) return null;
+                if (year === 2024 && month < 7) return null;
                 const filename = `${year}-${month}.json`;
                 return (
                   <tr key={filename}>
