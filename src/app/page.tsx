@@ -3,7 +3,11 @@ import Link from "next/link";
 import path from "path";
 import "./page.css";
 
-const years = [2025, 2024];
+let years: number[] = [];
+for (let i = 2024; i <= new Date().getFullYear(); i++) {
+  years.push(i);
+}
+
 export const dynamic = "force-dynamic";
 export default async function Home() {
   const directoryPath = path.join(process.cwd(), "data"); // Change this to your target directory
@@ -14,9 +18,6 @@ export default async function Home() {
       <h1>Directory Listing</h1>
       <table>
         <tbody>
-          <tr>
-            <th>Month</th>
-          </tr>
           {years.map((year) =>
             createMonths()
               .reverse()
@@ -31,15 +32,6 @@ export default async function Home() {
                   <tr key={filename}>
                     <td>
                       {year}-{month}
-                    </td>
-                    <td>
-                      <Link
-                        href={{
-                          pathname: `/scraper/${year}/${month}`,
-                        }}
-                      >
-                        <button>Scraper</button>
-                      </Link>{" "}
                     </td>
                     {files.includes(filename) && (
                       <>

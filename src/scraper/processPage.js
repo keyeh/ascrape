@@ -1,12 +1,10 @@
 import fetch from "./fetch.js";
 import * as cheerio from "cheerio";
-import fs from "fs";
-import { convert } from "html-to-text";
 
 export default async function processPage(url, logger = console.log) {
   let images = [];
   let download = "";
-  let text = "";
+  let text = [];
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -16,27 +14,26 @@ export default async function processPage(url, logger = console.log) {
 
     const $ = cheerio.load(html);
 
-    images = $(
-      "div#outerwrapper div.wrap div#singlecont div.round-border-box div.videosection img"
-    )
+    images = $("div.post-entry p img")
       .map((i, el) => $(el).attr("src"))
       .toArray();
 
-    download = $(
-      "div#outerwrapper div.wrap div#singlecont div.round-border-box div.videosection div a"
-    )
+    download = $("div.post-entry .entry-content > a")
       .map((i, el) => $(el).attr("href"))
       .toArray()
-      .filter((s) => s.includes("rapidgator.net/"))
       .filter((s) => !s.includes("rapidgator.net/article/premium/"));
+    // .filter((s) => s.includes("rapidgator.net/"))
 
-    text = $(
-      "div#outerwrapper div.wrap div#singlecont div.round-border-box div.videosection .textsection"
-    ).html();
-    text = convert(text, {
-      selectors: [{ selector: "a", options: { ignoreHref: true } }],
+    text.push($(".post .post-title").text());
+    text.push($(".post .post-box-meta-single time").text());
+    text.push($(".post .penci-standard-cat").text());
+
+    let tags = [];
+    $(".post .post-tags a").map((i, t) => {
+      tags.push($(t).text());
     });
-    text = text.replace(/[\n]+/g, "\n");
+    text.push(tags.join(", "));
+    text = text.join("\n");
   } catch (error) {
     const err = `Error fetching the page: ${url}`;
     logger(err);
