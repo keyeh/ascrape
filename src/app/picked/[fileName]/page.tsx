@@ -25,7 +25,7 @@ export default async function PickedPage({
     <pre>
       {posts
         .filter((post) => post.picked)
-        .map((post) => post.download)
+        .map((post) => post.download.join("\n"))
         .join("\n")}
     </pre>
   );

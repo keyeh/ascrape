@@ -156,6 +156,7 @@ function Post({ post, ...props }) {
   return (
     <div className="post" {...props}>
       <pre>{post.text}</pre>
+      <pre>Links: {post.download.length}</pre>
       {post.images?.length == 1 ? (
         <img
           className="postImage"
