@@ -20,8 +20,15 @@ export default async function processPage(url, logger = console.log) {
 
     download = $("div.post-entry .entry-content > a")
       .map((i, el) => $(el).attr("href"))
-      .toArray()
-      .filter((s) => !s.includes("rapidgator.net/article/premium/"));
+      .toArray();
+    download = download.concat(
+      $("div.post-entry .entry-content p a:not(:has(img))")
+        .map((i, el) => $(el).attr("href"))
+        .toArray()
+    );
+    download = download.filter(
+      (s) => !s.includes("rapidgator.net/article/premium/")
+    );
     // .filter((s) => s.includes("rapidgator.net/"))
 
     text.push($(".post .post-title").text());
