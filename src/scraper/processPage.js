@@ -1,5 +1,6 @@
 import fetch from "./fetch.js";
 import * as cheerio from "cheerio";
+import * as linkify from "linkifyjs";
 
 export default async function processPage(url, logger = console.log) {
   let images = [];
@@ -23,13 +24,23 @@ export default async function processPage(url, logger = console.log) {
       .toArray();
     download = download.concat(
       $("div.post-entry .entry-content p a:not(:has(img))")
-        .map((i, el) => $(el).attr("href"))
+        .map(
+          (i, el) => $(el).attr("href") || $(el).attr("[rg_fast_access]href")
+        )
         .toArray()
     );
-    download = download.filter(
-      (s) => !s.includes("rapidgator.net/article/premium/")
-    );
-    // .filter((s) => s.includes("rapidgator.net/"))
+
+    const additionalLinks = linkify
+      .find($("div.post-entry .entry-content").text())
+      .map((l) => l.href);
+    download = download.concat(additionalLinks);
+
+    download = download.filter((s) => {
+      for (let u of JSON.parse(process.env.EXCLUDE_DOWNLOAD)) {
+        if (s.includes(u)) return false;
+      }
+      return true;
+    });
 
     text.push($(".post .post-title").text());
     text.push($(".post .post-box-meta-single time").text());
