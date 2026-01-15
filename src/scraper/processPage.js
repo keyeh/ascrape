@@ -33,13 +33,21 @@ export default async function processPage(url, logger = console.log) {
     const additionalLinks = linkify
       .find($("div.post-entry .entry-content").text())
       .map((l) => l.href);
+
+    // const urlRegex = /(https?:\/\/[^\s]+)/g;
+    // const additionalLinks =
+    //   $("div.post-entry .entry-content").text().match(urlRegex) ?? [];
+
     download = download.concat(additionalLinks);
 
     download = download.filter((s) => {
       for (let u of JSON.parse(process.env.EXCLUDE_DOWNLOAD)) {
         if (s.includes(u)) return false;
       }
-      return true;
+      for (let u of JSON.parse(process.env.ALLOW_DOWNLOAD)) {
+        if (s.includes(u)) return true;
+      }
+      return false;
     });
 
     text.push($(".post .post-title").text());
