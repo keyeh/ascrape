@@ -2,6 +2,10 @@ import catchup from "./catchup.json" with { type: "json" };
 import processPage from "../src/scraper/processPage.js";
 import { fstat, writeFileSync } from "fs";
 
+// ==================Run in console
+// Array.from(document.querySelectorAll('.penci-entry-title > a'))
+//                    .map(el => el.href);
+
 const months = {};
 
 catchup.reverse().forEach((url) => {
